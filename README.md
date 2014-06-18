@@ -1,4 +1,4 @@
-# A working virtual Hadoop cluster running the latest CDH5, in 15 minutes
+# A working virtual Hadoop (CDH5) cluster
 
 With these files you can setup and provision a locally running, virtual Hadoop cluster in real distributed fashion for trying out Hadoop and related technologies. It runs the latest Cloudera Hadoop distribution: **CDH5**. It also allows you to practise the use of [Cloudera Manager](http://www.cloudera.com/content/cloudera/en/products-and-services/cloudera-enterprise/cloudera-manager.html) for installing the Hadoop stack. If you're looking for a fully automated install, without user intervention, look elsewhere. I specifically made this with the goal of creating an environment ideally suited for Cloudera Manager to do its job. This gives you the freedom to actually install the services you want, and change the configuration how you see fit.
 
@@ -12,6 +12,8 @@ The cluster conists of 4 nodes:
 As you can see, you'll need at least 10GB of free RAM to run this. If you have less, you can try to remove one machine from the Vagrantfile. This will lead to worse performance though!
 
 ## Usage
+
+Depending on the hardware of your computer, installation will probably take between 15 and 25 minutes.
 
 First install [VirtualBox](https://www.virtualbox.org/) and [Vagrant](http://www.vagrantup.com/).
 
