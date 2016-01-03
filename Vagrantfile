@@ -19,7 +19,7 @@ rm key
 fi
 apt-get update
 export DEBIAN_FRONTEND=noninteractive
-apt-get -q -y --force-yes install oracle-j2sdk1.7 cloudera-manager-server-db cloudera-manager-server cloudera-manager-daemons
+apt-get -q -y --force-yes install oracle-j2sdk1.7 dnsmasq cloudera-manager-server-db cloudera-manager-server cloudera-manager-daemons
 service cloudera-scm-server-db initdb
 service cloudera-scm-server-db start
 service cloudera-scm-server start
@@ -39,6 +39,14 @@ ff02::2 ip6-allrouters
 EOF
 SCRIPT
 
+$slave_script = <<SCRIPT
+cat > /etc/dhcp/dhclient.conf <<EOF
+supersede domain-name-servers 10.211.55.100;
+EOF
+sudo dhclient
+SCRIPT
+
+
 Vagrant.configure("2") do |config|
 
   # Define base image
@@ -54,7 +62,7 @@ Vagrant.configure("2") do |config|
   config.vm.define :master do |master|
     master.vm.provider :virtualbox do |v|
       v.name = "vm-cluster-node1"
-      v.customize ["modifyvm", :id, "--memory", "4096"]
+      v.customize ["modifyvm", :id, "--memory", "10240"]
     end
     master.vm.network :private_network, ip: "10.211.55.100"
     master.vm.hostname = "vm-cluster-node1"
@@ -67,11 +75,12 @@ Vagrant.configure("2") do |config|
     slave1.vm.box = "precise64"
     slave1.vm.provider :virtualbox do |v|
       v.name = "vm-cluster-node2"
-      v.customize ["modifyvm", :id, "--memory", "2048"]
+      v.customize ["modifyvm", :id, "--memory", "4096"]
     end
     slave1.vm.network :private_network, ip: "10.211.55.101"
     slave1.vm.hostname = "vm-cluster-node2"
     slave1.vm.provision :shell, :inline => $hosts_script
+    slave1.vm.provision :shell, :inline => $slave_script
     slave1.vm.provision :hostmanager
   end
 
@@ -84,6 +93,7 @@ Vagrant.configure("2") do |config|
     slave2.vm.network :private_network, ip: "10.211.55.102"
     slave2.vm.hostname = "vm-cluster-node3"
     slave2.vm.provision :shell, :inline => $hosts_script
+    slave2.vm.provision :shell, :inline => $slave_script
     slave2.vm.provision :hostmanager
   end
 
@@ -96,6 +106,7 @@ Vagrant.configure("2") do |config|
     slave3.vm.network :private_network, ip: "10.211.55.103"
     slave3.vm.hostname = "vm-cluster-node4"
     slave3.vm.provision :shell, :inline => $hosts_script
+    slave3.vm.provision :shell, :inline => $slave_script
     slave3.vm.provision :hostmanager
   end
 
